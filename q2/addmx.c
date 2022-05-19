@@ -1,13 +1,8 @@
 #include <sys/mman.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include <stdio.h>
 #include <math.h>
-
-
 #include <string.h>
 #include <stdlib.h>
-#include <ctype.h>
 #include <unistd.h> 
 
 #define MAX_NUM_CHARS 2
@@ -66,18 +61,24 @@ int main(int argc, char **argv) {
 
     int offset = 0;
     int matrixDist = rows * cols;
-    int nextColElem = cols;
     int pid;
-
+    /* for(int i = 0; i < rows * cols * 2; i++){
+        printf("%d ",*(shared + i));
+    } */
+    //printf("\n\n\n\n");
    for (int i = 0; i < cols; i++)
     {
         if ((pid = fork()) == 0)     // child process
         {
-            *(shared + offset + 2 * matrixDist) = *(shared + offset + matrixDist) + *(shared + offset);
+            for(int coln = 0; coln < cols; coln++){
+                *(shared + offset + 2 * matrixDist + cols * coln) = *(shared + offset + matrixDist + cols * coln) + *(shared + offset + cols * coln);
+                //printf("primeiro %d segundo %d terceiro %d   ", offset + cols * coln, offset + matrixDist + cols * coln,  offset + 2 * matrixDist + cols * coln);
+                //printf("primeiro %d segundo %d terceiro %d\n", *(shared + offset + cols * coln), *(shared + offset + matrixDist + cols * coln),  *(shared + offset + 2 * matrixDist + cols * coln));
 
-            *(shared + offset + 2 * matrixDist + nextColElem) = *(shared + offset + matrixDist + nextColElem) + *(shared + offset + nextColElem);
+            }
+            
 
-            *(shared + offset + 2 * matrixDist + 2 * nextColElem) = *(shared + offset + matrixDist + 2 * nextColElem) + *(shared + offset + 2 * nextColElem);
+
 
             exit(0);            
         }
@@ -93,7 +94,7 @@ int main(int argc, char **argv) {
     printf("%dx%d\n",rows, cols);
     for(int i = rows * cols * 2; i < rows * cols * 3; i++){
         printf("%d ", *(shared + i));
-        if(i % (rows * cols * 2) == cols - 1){
+    if((i - rows * cols * 2) % cols == cols - 1){
             printf("\n");
         }
     } 
