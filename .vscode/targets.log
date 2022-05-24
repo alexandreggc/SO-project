@@ -8,7 +8,7 @@ make: *** No rule to make target 'all'.  Stop.
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
 
-# Make data base, printed on Tue May 24 18:24:05 2022
+# Make data base, printed on Tue May 24 19:43:27 2022
 
 # Variables
 
@@ -234,6 +234,7 @@ SNAP_CONTEXT = sE3dGMsiInrwMuMNqp1t6wW42HqhiVwxULMlFMIAF33Hvb0BKxoV
 MANAGERPID = 2052
 # environment
 LC_MEASUREMENT = pt_PT.UTF-8
+ 
 # environment
 GIO_LAUNCHED_DESKTOP_FILE_PID = 268769
 # environment
@@ -281,7 +282,6 @@ SNAP_COMMON = /var/snap/code/common
 # environment
 LS_OPTIONS = --color=auto
 # default
- 
 .FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell nocomment grouped-target extra-prereqs archives jobserver output-sync check-symlink guile load
 # environment
 SNAP_USER_DATA = /home/alexandre/snap/code/97
@@ -304,9 +304,9 @@ SNAP_LIBRARY_PATH = /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd
 
 # Directories
 
-# . (device 66306, inode 9456540): 6 files, no impossibilities.
+# . (device 66306, inode 9456540): 7 files, no impossibilities.
 
-# 6 files, no impossibilities in 1 directories.
+# 7 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -356,12 +356,13 @@ GNUmakefile:
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 14 / storage = 109 B / avg = 7 B
-# current buf: size = 8162 B / used = 109 B / count = 14 / avg = 7 B
+# strcache buffers: 1 (0) / strings = 15 / storage = 112 B / avg = 7 B
+# current buf: size = 8162 B / used = 112 B / count = 15 / avg = 7 B
 
-# strcache performance: lookups = 17 / hit rate = 17%
+# strcache performance: lookups = 18 / hit rate = 16%
 # hash-table stats:
-# Load=14/8192=0%, Rehash=0, Collisions=0/17=0%
-# Finished Make data base on Tue May 24 18:24:05 2022
+ 
+# Load=15/8192=0%, Rehash=0, Collisions=0/18=0%
+# Finished Make data base on Tue May 24 19:43:27 2022
 
  
