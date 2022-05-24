@@ -1,4 +1,5 @@
 #include <sys/mman.h>
+#include <sys/wait.h>
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
@@ -32,8 +33,8 @@ int main(int argc, char **argv) {
         return 1;
     }
     int number, counter = 0; 
-    char trashline[5];
-    fgets (trashline, 100, file1);
+    char trashline[sizeof(int)*3];
+    fgets (trashline, sizeof(int)*3, file1);
     while(!feof (file1)){
         fscanf (file1, "%d", &number);
         *(shared + counter) = number;
@@ -45,7 +46,7 @@ int main(int argc, char **argv) {
         printf("Failed to open '%s' file\n", filename2);
         return 1;
     }
-    fgets (trashline, 100, file2);
+    fgets (trashline, sizeof(int)*3, file2);
     while(!feof (file2)){
         fscanf (file2, "%d", &number);  
         *(shared + counter) = number;
@@ -54,7 +55,6 @@ int main(int argc, char **argv) {
     fclose(file2);
 
     int offset = 0, matrixDist = rows * cols, pid;
-    int pid;
     for (int col = 0; col < cols; col++)
     {   
         if ((pid = fork()) == 0)     // child process
@@ -67,11 +67,12 @@ int main(int argc, char **argv) {
     }
 
     /* Wait for children */
-    int corpse;
-    int status;
-    while ((corpse = wait(&status)) > 0){
-        
+    int status, corpse;
+    while ((corpse = wait(&status)) > 0)
+    {
+        /* code */
     }
+    
     printf("%dx%d\n",rows, cols);
     for(int i = rows * cols * 2; i < rows * cols * 3; i++){
         printf("%d ", *(shared + i));

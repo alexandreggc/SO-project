@@ -1,6 +1,6 @@
 make --dry-run --always-make --keep-going --print-directory
-make: Entering directory `/Users/tiagobranquinho/Desktop/universidade/2ANO/2 semestre/SO/SO-project'
-make: Leaving directory `/Users/tiagobranquinho/Desktop/universidade/2ANO/2 semestre/SO/SO-project'
+make: Entering directory '/home/alexandre/Documents/FEUP/2ano/2Sem/SO/SO-project'
+make: Leaving directory '/home/alexandre/Documents/FEUP/2ano/2Sem/SO/SO-project'
  
 make: *** No targets specified and no makefile found.  Stop.
 
