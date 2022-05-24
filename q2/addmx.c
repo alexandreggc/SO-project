@@ -17,12 +17,9 @@ int main(int argc, char **argv) {
 
     FILE *file1;
     FILE *file2;
-    char *filename1 = argv[1];
-    char *filename2 = argv[2];
-    int rows;
-    int cols;
+    char *filename1 = argv[1], *filename2 = argv[2];
+    int rows, cols;
 
-    
     if(getMatrixInfo(filename1, filename2, &rows, &cols)){
         printf("They dont have same dimensions! \n");
         return 1;
@@ -42,44 +39,31 @@ int main(int argc, char **argv) {
         *(shared + counter) = number;
         counter++;
     }
-
     fclose(file1);
 
     if ((file2 = fopen(filename2, "r")) == NULL){
         printf("Failed to open '%s' file\n", filename2);
         return 1;
     }
-
     fgets (trashline, 100, file2);
     while(!feof (file2)){
         fscanf (file2, "%d", &number);  
         *(shared + counter) = number;
         counter++;
     }
-
     fclose(file2);
 
-    int offset = 0;
-    int matrixDist = rows * cols;
+    int offset = 0, matrixDist = rows * cols, pid;
     int pid;
-    /* for(int i = 0; i < rows * cols * 2; i++){
-        printf("%d ",*(shared + i));
-    } */
-    //printf("\n\n\n\n");
     for (int col = 0; col < cols; col++)
     {   
         if ((pid = fork()) == 0)     // child process
         {
             for(int row = 0; row < rows; row++){
                 *(shared + col + 2 * matrixDist + cols * row) = *(shared + col + matrixDist + cols * row) + *(shared + col + cols * row);
-                //printf("primeiro %d segundo %d terceiro %d   ", col + cols * row, col + matrixDist + cols * row,  col + 2 * matrixDist + cols * row);
-                //printf("primeiro %d segundo %d terceiro %d\n", *(shared + col + cols * row), *(shared + col + matrixDist + cols * row),  *(shared + col + 2 * matrixDist + cols * row));
-
             }
-            //printf("finished\n");   
             exit(0);
         }
-
     }
 
     /* Wait for children */
@@ -97,117 +81,28 @@ int main(int argc, char **argv) {
     } 
     printf("\n");
     return 0;
-
 }
 
 int getMatrixInfo(char *filename1, char *filename2, int *rows, int *cols){
     FILE *file1, *file2;
     char c;
-    char *row1 = malloc(sizeof(char) * MAX_NUM_CHARS);
-    char *col1 = malloc(sizeof(char) * MAX_NUM_CHARS);
-    char *row2 = malloc(sizeof(char) * MAX_NUM_CHARS);
-    char *col2 = malloc(sizeof(char) * MAX_NUM_CHARS);
-    int read_file = 1;
-    int x = 0;
-    int first_digit = 1;
+    int row1, row2, col1, col2;
+
     if ((file1 = fopen(filename1, "r")) == NULL){
         printf("Failed to open '%s' file\n", filename1);
         return 1;
     }
-
-    while(read_file){
-        c=fgetc(file1);
-        if(c == '\n'){
-            read_file = 0;
-        }
-        else if(c == 'x'){
-            x = 1;
-            first_digit = 1;
-        }
-        else{
-            if(first_digit){
-                if(x==0){
-                    *row1 = c;
-                }
-                else{
-                    *col1 = c;
-
-                }
-                first_digit = 0;
-            }
-            else{
-                if(x==0){
-                    *(row1+1) = c;
-                }
-                else{
-                    *(col1+1) = c;
-                }
-                first_digit = 1;
-            }
-        }
-    }
+    fscanf(file1, "%i %c %i", &row1, &c, &col1);
     fclose(file1);
 
     if ((file2 = fopen(filename2, "r")) == NULL){
         printf("Failed to open '%s' file\n", filename2);
         return 1;
-    } 
-    read_file = 1;
-    x = 0;
-    first_digit = 1;
-    while(read_file){
-        c=fgetc(file2);
-        if(c == '\n'){
-            read_file = 0;
-        }
-        else if(c == 'x'){
-            x = 1;
-            first_digit = 1;
-        }
-        else{
-            if(first_digit){
-                if(x==0){
-                    *row2 = c;
-                }
-                else{
-                    *col2 = c;
-
-                }
-                first_digit = 0;
-            }
-            else{
-                if(x==0){
-                    *(row2+1) = c;
-                }
-                else{
-                    *(col2+1) = c;
-                }
-                first_digit = 1;
-            }
-        }
     }
+    fscanf(file2, "%i %c %i", &row2, &c, &col2);
     fclose(file2);
-    size_t len = strlen(row2);
-    if(strlen(row1) > strlen(row2)){
-        len = strlen(row1);
-    }
-    for(int i = 0; i < len; i++){
-        if(*(row1 + i) != *(row2 + i)){
-            return 1;
-        }
-    }
-    len = strlen(col2);
-    if(strlen(col1) > strlen(col2)){
-        len = strlen(col1);
-    }
-    for(int i = 0; i < len; i++){
-        if(*(col1 + i) != *(col2 + i)){
-            return 1;
-        }
-    }
 
-    *rows = atoi(row1);
-    *cols = atoi(col1);
-    return 0;
-
+    *rows = row1;
+    *cols = col1;
+    return (row1 != row2 || col1 != col2);
 }
