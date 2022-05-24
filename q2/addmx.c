@@ -66,23 +66,20 @@ int main(int argc, char **argv) {
         printf("%d ",*(shared + i));
     } */
     //printf("\n\n\n\n");
-   for (int i = 0; i < cols; i++)
-    {
+    for (int col = 0; col < cols; col++)
+    {   
         if ((pid = fork()) == 0)     // child process
         {
-            for(int coln = 0; coln < cols; coln++){
-                *(shared + offset + 2 * matrixDist + cols * coln) = *(shared + offset + matrixDist + cols * coln) + *(shared + offset + cols * coln);
-                //printf("primeiro %d segundo %d terceiro %d   ", offset + cols * coln, offset + matrixDist + cols * coln,  offset + 2 * matrixDist + cols * coln);
-                //printf("primeiro %d segundo %d terceiro %d\n", *(shared + offset + cols * coln), *(shared + offset + matrixDist + cols * coln),  *(shared + offset + 2 * matrixDist + cols * coln));
+            for(int row = 0; row < rows; row++){
+                *(shared + col + 2 * matrixDist + cols * row) = *(shared + col + matrixDist + cols * row) + *(shared + col + cols * row);
+                //printf("primeiro %d segundo %d terceiro %d   ", col + cols * row, col + matrixDist + cols * row,  col + 2 * matrixDist + cols * row);
+                //printf("primeiro %d segundo %d terceiro %d\n", *(shared + col + cols * row), *(shared + col + matrixDist + cols * row),  *(shared + col + 2 * matrixDist + cols * row));
 
             }
-            
-
-
-
-            exit(0);            
+            //printf("finished\n");   
+            exit(0);
         }
-        offset++;
+
     }
 
     /* Wait for children */
