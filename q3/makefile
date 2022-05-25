@@ -14,11 +14,15 @@ OBJ=$(C_SOURCE:.c=.o)
 CC=gcc
  
 # Flags for compiler
-CC_FLAGS=-c         \
-         -W         \
-         -Wall      \
-         -ansi      \
-         -pedantic
+CC_FLAGS=-c                 \
+         -w                 \
+         -W                 \
+         -Wall              \
+         -Wextra            \
+         -ansi              \
+         -pedantic          \
+         -pedantic-errors   \
+         -std=c99           \
 
 #
 # Compilation and linking
