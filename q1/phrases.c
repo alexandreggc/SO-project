@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
     }
 
     bool extend_res;
-    char str[MAX_STR_SIZE];
+    char str[MAX_LINE_SIZE];
     FILE *file;
     char *filename;
 

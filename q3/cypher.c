@@ -5,140 +5,165 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <stdbool.h>
-#include "hashmap.h"
+#include <sys/mman.h>
 
-#define MAX_WORD_SIZE 200
-#define MAX_STR_SIZE 1000
+#define MAX_WORD_SIZE 256
+#define MAX_LINE_SIZE 1024
 
- 
-struct cypher {
-    char *key;
-    char *value;
-};
-
-int cypher_compare(const void *a, const void *b, void *udata) {
-    const struct cypher *ua = a;
-    const struct cypher *ub = b;
-    return strcmp(ua->key, ub->key);
-}
-
-bool cypher_iter(const void *item, void *udata) {
-    const struct cypher *cypher = item;
-    //printf("%s (value=%s)\n", cypher->key, cypher->value);
-    return true;
-}
-
-uint64_t cypher_hash(const void *item, uint64_t seed0, uint64_t seed1) {
-    const struct cypher *cypher = item;
-    return hashmap_sip(cypher->key, strlen(cypher->key), seed0, seed1);
-}
-
-char* replaceWord(const char* s, const char* oldW, const char* newW) {
-    
-    //char* result;
-    int i, cnt = 0;
-    int newWlen = strlen(newW);
-    int oldWlen = strlen(oldW);
-  
+int replaceWord(char* old_text, char* new_test, const char* old_word, const char* new_word) {
+    char* result;
+    int i, n_cnt = 0, o_cnt = 0;
+    //printf("passoui %s %s\n", old_word, new_word);
+    int newWlen = strlen(new_word);
+    //printf("passoui\n");
+    int oldWlen = strlen(old_word);
+    //printf("passoui\n");
     // Counting the number of times old word
     // occur in the string
-    for (i = 0; s[i] != '\0'; i++) {
-        if (strstr(&s[i], oldW) == &s[i]) {
-            cnt++;
-  
+    for (i = 0; old_text[i] != '\0'; i++) {
+        if (strstr(&old_text[i], old_word) == &old_text[i]) {
+            n_cnt++;
             // Jumping to index after the old word.
             i += oldWlen - 1;
         }
-    }
-  
-    // Making new string of enough length
-    //result = (char*)malloc(i + cnt * (newWlen - oldWlen) + 1);
-    char result[i + cnt * (newWlen - oldWlen) + 1];
-
-    i = 0;
-    while (*s) {
-        // compare the substring with the result
-        if (strstr(s, oldW) == s) {
-            strcpy(&result[i], newW);
-            i += newWlen;
-            s += oldWlen;
+        if (strstr(&old_text[i], new_word) == &old_text[i]) {
+            o_cnt++;
+            i += newWlen - 1;
         }
-        else
-            result[i++] = *s++;
     }
+    //printf("passoui\n");
+    // Making new string of enough length
+    result = (char*)malloc(i + n_cnt * (newWlen - oldWlen) + o_cnt * (oldWlen - newWlen) + 1);
   
+    i = 0;
+    while (*old_text) {
+        // compare the substring with the result
+        if (strstr(old_text, old_word) == old_text) {
+            //printf("\n--analise 1: %s\n\n", old_text);
+            strcpy(&result[i], new_word);
+            //printf("\n--resultado 1: %s\n\n", result);
+            i += newWlen;
+            old_text += oldWlen;
+        }
+        else if (strstr(old_text, new_word) == old_text){
+            //printf("\n--analise 2: %s\n\n", old_text);
+            strcpy(&result[i], old_word);
+            //printf("\n--resultado 2: %s\n\n", result);
+            i += oldWlen;
+            old_text += newWlen;
+        }
+        else{
+            result[i++] = *old_text++;
+        }
+    }
     result[i] = '\0';
-    return result;
+
+    size_t size = strlen(result);
+    char text[MAX_LINE_SIZE] = "";
+    for (int index=0; index < size; index++){
+        char ch = result[index];
+        //printf("passoui %c\n", ch);
+        strncat(text, &ch, 1);
+        //printf("passoui\n");
+    }
+    //printf("%s\n\n", text);
+    free(result);
+    strcpy(new_test, text);
+    return 0;
 }
 
-int write_to_pipe(int pipe, int* no_lines){
-    char line[MAX_STR_SIZE];
-    *no_lines = 0;
-    while(fgets (line, MAX_STR_SIZE, stdin)){
+int write_to_pipe(int pipe){
+    char line[MAX_LINE_SIZE];
+    while(fgets (line, MAX_LINE_SIZE, stdin)){
         write(pipe, line, strlen(line));
-        *no_lines++;
     }
     return 0;
 }
 
 int read_from_pipe(int pipe, FILE* stream){
     int numRead;
-    char line[MAX_STR_SIZE];
+    char line[MAX_LINE_SIZE];
     while (1) {
-        numRead = read(pipe, line, MAX_STR_SIZE);
+        numRead = read(pipe, line, MAX_LINE_SIZE);
         if (numRead == -1) {
             perror("read");
             exit(EXIT_FAILURE);
         }
         if (numRead == 0) break;
         fprintf(stream, line);
+        fprintf(stream, "\n");
     }
     return 0;
 }
 
-int load_map(struct hashmap *map){
+int no_lines(char *filename, int* no_lines){
+    FILE* file;
+    if ((file = fopen(filename, "r")) == NULL){
+        printf("Failed to open file\n");
+        return 1;
+    }
+    char buff[MAX_LINE_SIZE];
+    (*no_lines) = 0;
+    while(fgets (buff, MAX_LINE_SIZE, file)){
+        (*no_lines)++;
+    }
+    fclose(file);
+    return 0;
+}
+
+int load_cyphers(char ** keys, char** vals){
+    char buff[MAX_LINE_SIZE];
     FILE* cyphers;
-    char k[MAX_WORD_SIZE];
-    char val[MAX_WORD_SIZE];
     if ((cyphers = fopen("cypher.txt", "r")) == NULL){
         printf("Failed to open file\n");
         return 1;
     }
-    printf("load map loop\n");
-    while(fscanf(cyphers, "%s %s", &k, &val) != EOF){
-        //printf("%s %s\n", k, val);
-        //printf("passou\n");
-        hashmap_set(map, &(struct cypher){ .key=k, .value=val });
-        //printf("passou\n");
-        //hashmap_set(map, &(struct cypher){ .key=val, .value=k });
+    rewind(cyphers);
+    int i = 0;
+    char k[MAX_WORD_SIZE]; char val[MAX_WORD_SIZE];
+    while(fgets (buff, MAX_LINE_SIZE, cyphers)){
+        //printf("antes passou i = %d\n", i);
+        sscanf( buff, "%s %s", &k, &val);
+        //printf("passou i = %d   %s    %s\n", i, k, val);
+        strcpy(keys[i], k);
+        strcpy(vals[i], val);
+        //printf("passou i = %d\n   %s    %s\n", i, keys[i], vals[i]);
+        i++;
     }
-    struct cypher *c = hashmap_get(map, &(struct cypher){ .key="night" });
-    //printf("key %s len: %d\n", k, strlen(k));
-    //printf("%s\n", c?"exists":"not exists");
-    //printf("%s %s\n", c->key, c->value);
-    size_t iter = 0;
-    void *item;
-    //printf("\n-- iterate over all users (hashmap_iter) --\n");
-    while (hashmap_iter(map, &iter, &item)) {
-        const struct cypher *c = item;
-        //printf("%s (age=%s)\n", c->key, c->value);
-    }
+    //printf("i = %d\n", i);
+    fclose(cyphers);
+    //printf("passou i = %d\n", i);
     return 0;
 }
 
 int main() {
-    struct hashmap *map = hashmap_new(sizeof(struct cypher), 0, 0, 0, cypher_hash, cypher_compare, NULL, NULL);
-    load_map(map);
-    
-    // We use two pipes
-    // First pipe to send input string from parent
-    // Second pipe to send concatenated string from child
- 
-    int fd1[2]; // Used to store two ends of first pipe
-    int fd2[2]; // Used to store two ends of second pipe
-    int no_lines, pid;
+    int no_cyphers;
+    if (no_lines("cypher.txt", &no_cyphers)) return 1;
+
+    // create keys and values arrays to store the cyphers
+    //char** keys = mmap(NULL, 2 * no_cyphers * sizeof(char*), PROT_READ|PROT_WRITE, MAP_SHARED|MAP_ANONYMOUS, -1, 0);
+    char** keys = malloc(no_cyphers * sizeof(char*));
+    for (int i = 0; i < no_cyphers; i++){
+        keys[i] = malloc(MAX_WORD_SIZE * sizeof(char));
+    }
+    char** vals = malloc(no_cyphers * sizeof(char*));
+    for (int i = 0; i < no_cyphers; i++){
+        vals[i] = malloc(MAX_WORD_SIZE * sizeof(char));
+    }
+
+    if (load_cyphers(keys, vals)) return 1;
+    for (int i=0; i<no_cyphers; i++){
+        //printf("no main   %s    %s\n", keys[i], vals[i]);
+    }
+    //printf("passou\n");
+
+    int fd1[2];
+    int fd2[2];
+    int pid;
     ssize_t numRead;
- 
+    
+    
+
     if (pipe(fd1) == -1) {
         fprintf(stderr, "Pipe Failed");
         return 1;
@@ -154,12 +179,11 @@ int main() {
     }
     // Parent process
     else if (pid > 0) {
-        char concat_str[100];
         close(fd1[0]); // Close reading end of first pipe
- 
+
         // Write input string and close writing end of first
         // pipe.
-        write_to_pipe(fd1[1], &no_lines);
+        write_to_pipe(fd1[1]);
         close(fd1[1]);
         
         // Wait for child to send a string
@@ -175,39 +199,41 @@ int main() {
  
     // child process
     else {
-        printf("in child process\n");
+        //printf("in child process\n");
         close(fd1[1]);
         close(fd2[0]);
         char *res = NULL;
-        char str[MAX_STR_SIZE];
-        printf("passou\n");
+        char str[MAX_LINE_SIZE];
+        //printf("passou\n");
 
         while (1) {
-            numRead = read(fd1[0], str, MAX_STR_SIZE);
+            numRead = read(fd1[0], str, MAX_LINE_SIZE);
             if (numRead == -1) {
                 perror("read");
                 exit(EXIT_FAILURE);
             }
-            if (numRead == 0)
-                break;
+            if (numRead == 0) break;
+            //printf("before loop cyphers: %d\n", no_cyphers);
+            char* new_str;
+            for (int i=0; i < no_cyphers; i++){
+                //printf("watching word: %s \n", keys[i]);
+                char* k = keys[i];
+                char* val = vals[i];
+                //strcpy(k, keys[i]);
+                //strcpy(val, vals[i]);
+                //printf("old word: %s   new word: %s \n", k, val);
+                replaceWord(str, new_str, k, val);
+                strcpy(str, new_str);
+                strcpy(new_str, "");
+            }
             if (write(fd2[1], str, numRead) != numRead){
                 perror("write - partial/failed write");
                 exit(EXIT_FAILURE);
             }
             //printf("read data: %s\n", str);
         }
-        /*
-        while (hashmap_iter(map, &iter, &item)) {
-            const struct cypher *cypher = item;
-            printf("%s (value=%s)\n", cypher->key, cypher->value);
-            //str = replaceWord(str, cypher->key, cypher->value);
-            printf("completou um ciclo: %s\n", str);
-        }
-        */
         close(fd1[0]);
         exit(0);
     }
-    
-    hashmap_free(map);
     return 0;
 }
