@@ -1,6 +1,7 @@
-make --dry-run --always-make --keep-going --print-directory
+make --dry-run --keep-going --print-directory
 make: Entering directory '/home/alexandre/Documents/FEUP/2ano/2Sem/SO/SO-project'
-make: Leaving directory '/home/alexandre/Documents/FEUP/2ano/2Sem/SO/SO-project'
  
 make: *** No targets specified and no makefile found.  Stop.
 
+make: Leaving directory '/home/alexandre/Documents/FEUP/2ano/2Sem/SO/SO-project'
+ 

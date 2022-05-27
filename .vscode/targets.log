@@ -2,13 +2,15 @@ make all --print-data-base --no-builtin-variables --no-builtin-rules --question
 make: *** No rule to make target 'all'.  Stop.
 
 # GNU Make 4.3
+ 
 # Built for x86_64-pc-linux-gnu
 # Copyright (C) 1988-2020 Free Software Foundation, Inc.
 # License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
 # This is free software: you are free to change and redistribute it.
 # There is NO WARRANTY, to the extent permitted by law.
+ 
 
-# Make data base, printed on Wed May 25 22:49:56 2022
+# Make data base, printed on Fri May 27 17:58:08 2022
 
 # Variables
 
@@ -23,7 +25,7 @@ SNAP_INSTANCE_KEY =
 # environment
 GJS_DEBUG_OUTPUT = stderr
 # environment
-VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-fa8cc5aa-af37-48d4-96a1-54a036e6b51d.sock
+VSCODE_IPC_HOOK_EXTHOST = /run/user/1000/vscode-ipc-bea72790-19c2-42e9-b63f-a104ac040c98.sock
 # environment
 LC_NAME = pt_PT.UTF-8
 # environment
@@ -42,6 +44,7 @@ MAKE_COMMAND := make
 @D = $(patsubst %/,%,$(dir $@))
 # environment
 SNAP_INSTANCE_NAME = code
+ 
 # environment
 GDK_PIXBUF_MODULEDIR = /snap/code/97/usr/lib/x86_64-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders
 # environment
@@ -69,7 +72,7 @@ VSCODE_CODE_CACHE_PATH = /home/alexandre/.config/Code/CachedData/c3511e6c69bb390
 # environment
 LANG = C
 # environment
-XAUTHORITY = /run/user/1000/.mutter-Xwaylandauth.5Z1PM1
+XAUTHORITY = /run/user/1000/.mutter-Xwaylandauth.2B7OM1
 # default
 .LOADED := 
 # environment
@@ -81,6 +84,7 @@ MAKEFLAGS = pqrR
 # environment
 LESS_TERMCAP_so = [01;47;34m
 # makefile
+ 
 CURDIR := /home/alexandre/Documents/FEUP/2ano/2Sem/SO/SO-project
 # environment
 VSCODE_PIPE_LOGGING = true
@@ -113,17 +117,18 @@ SNAP_REEXEC =
 # environment
 VSCODE_VERBOSE_LOGGING = true
 # environment
-VSCODE_PID = 726027
+VSCODE_PID = 588786
 # environment
 MOZ_ENABLE_WAYLAND = 1
 # environment
+ 
 XDG_SESSION_TYPE = wayland
 # automatic
 ?D = $(patsubst %/,%,$(dir $?))
 # environment
 BAMF_DESKTOP_FILE_HINT = /var/lib/snapd/desktop/applications/code_code.desktop
 # environment
-SESSION_MANAGER = local/lenovopc:@/tmp/.ICE-unix/2099,unix/lenovopc:/tmp/.ICE-unix/2099
+SESSION_MANAGER = local/lenovopc:@/tmp/.ICE-unix/1387,unix/lenovopc:/tmp/.ICE-unix/1387
 # automatic
 *F = $(notdir $*)
 # environment
@@ -145,6 +150,7 @@ LESS_TERMCAP_us = [01;36m
 # default
 MAKECMDGOALS := all
 # environment
+ 
 XMODIFIERS = @im=ibus
 # environment
 GJS_DEBUG_TOPICS = JS ERROR;JS LOG
@@ -177,7 +183,7 @@ LESS_TERMCAP_mb = [01;32m
 # environment
 SNAP = /snap/code/97
 # environment
-INVOCATION_ID = 910eddbec1f340d3ac9ace38b109307c
+INVOCATION_ID = fe35365fbda0434bacdb11e0fd9a1a7a
 # environment
 SNAP_REVISION = 97
 # environment
@@ -207,6 +213,7 @@ ORIGINAL_XDG_CURRENT_DESKTOP = GNOME
 # 'override' directive
 GNUMAKEFLAGS := 
 # environment
+ 
 LOGNAME = alexandre
 # environment
 GIO_LAUNCHED_DESKTOP_FILE = /var/lib/snapd/desktop/applications/code_code.desktop
@@ -215,7 +222,7 @@ SNAP_ARCH = amd64
 # makefile
 .DEFAULT_GOAL := 
 # environment
-SYSTEMD_EXEC_PID = 2115
+SYSTEMD_EXEC_PID = 1403
 # environment
 EDITOR = /usr/bin/nano
 # environment
@@ -231,11 +238,11 @@ SNAP_DATA = /var/snap/code/97
 # environment
 SNAP_CONTEXT = sE3dGMsiInrwMuMNqp1t6wW42HqhiVwxULMlFMIAF33Hvb0BKxoV
 # environment
-MANAGERPID = 2052
+MANAGERPID = 1341
 # environment
 LC_MEASUREMENT = pt_PT.UTF-8
 # environment
-GIO_LAUNCHED_DESKTOP_FILE_PID = 725986
+GIO_LAUNCHED_DESKTOP_FILE_PID = 588711
 # environment
 _ = /usr/bin/make
 # environment
@@ -245,7 +252,7 @@ XDG_RUNTIME_DIR = /run/user/1000
 # environment
 GDK_PIXBUF_MODULE_FILE = /home/alexandre/snap/code/common/.cache/gdk-pixbuf-loaders.cache
 # environment
-JOURNAL_STREAM = 8:28347
+JOURNAL_STREAM = 8:30039
 # environment
 XDG_SESSION_CLASS = user
 # environment
@@ -278,10 +285,10 @@ VSCODE_CLI = 1
 ELECTRON_NO_ATTACH_CONSOLE = 1
 # environment
 SNAP_COMMON = /var/snap/code/common
+ 
 # environment
 LS_OPTIONS = --color=auto
 # default
- 
 .FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine oneshell nocomment grouped-target extra-prereqs archives jobserver output-sync check-symlink guile load
 # environment
 SNAP_USER_DATA = /home/alexandre/snap/code/97
@@ -304,9 +311,9 @@ SNAP_LIBRARY_PATH = /var/lib/snapd/lib/gl:/var/lib/snapd/lib/gl32:/var/lib/snapd
 
 # Directories
 
-# . (device 66306, inode 9456540): 8 files, no impossibilities.
+# . (device 66306, inode 9456540): 7 files, no impossibilities.
 
-# 8 files, no impossibilities in 1 directories.
+# 7 files, no impossibilities in 1 directories.
 
 # Implicit Rules
 
@@ -339,6 +346,7 @@ makefile:
 #  Implicit rule search has been done.
 #  File does not exist.
 #  File has been updated.
+ 
 #  Failed to be updated.
 
 # Not a target:
@@ -356,12 +364,12 @@ GNUmakefile:
 
 # No general ('VPATH' variable) search path.
 
-# strcache buffers: 1 (0) / strings = 16 / storage = 116 B / avg = 7 B
-# current buf: size = 8162 B / used = 116 B / count = 16 / avg = 7 B
+# strcache buffers: 1 (0) / strings = 15 / storage = 112 B / avg = 7 B
+# current buf: size = 8162 B / used = 112 B / count = 15 / avg = 7 B
 
-# strcache performance: lookups = 19 / hit rate = 15%
+# strcache performance: lookups = 18 / hit rate = 16%
 # hash-table stats:
-# Load=16/8192=0%, Rehash=0, Collisions=0/19=0%
-# Finished Make data base on Wed May 25 22:49:56 2022
+# Load=15/8192=0%, Rehash=0, Collisions=0/18=0%
+# Finished Make data base on Fri May 27 17:58:08 2022
 
  

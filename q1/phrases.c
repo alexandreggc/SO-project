@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define MAX_PHRASE_SIZE 512
-#define MAX_STR_SIZE 128
+#define MAX_LINE_SIZE 512
+#define MAX_WORD_SIZE 128
 
 int no_phrases(char* filename);
 
@@ -15,7 +15,7 @@ int main(int argc, char **argv) {
     }
 
     bool extend_res;
-    char str[MAX_LINE_SIZE];
+    char str[MAX_WORD_SIZE];
     FILE *file;
     char *filename;
 
@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
 
     char** phrases = malloc(num_phrases * sizeof(char*));
     for (int i = 0; i < num_phrases; i++){
-        phrases[i] = malloc(MAX_PHRASE_SIZE * sizeof(char));
+        phrases[i] = malloc(MAX_LINE_SIZE * sizeof(char));
     }
 
     int n = 0;
@@ -59,6 +59,12 @@ int main(int argc, char **argv) {
     else{
         printf("%d\n", num_phrases);
     }
+
+    //free alocated memory
+    for (int i = 0; i < num_phrases; i++){
+        free(phrases[i]);
+    }
+    free(phrases);
 
     return 0;
 }

@@ -5,25 +5,20 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <stdbool.h>
-#include <sys/mman.h>
 
 #define MAX_WORD_SIZE 256
 #define MAX_LINE_SIZE 1024
 
-int replaceWord(char* old_text, char* new_test, const char* old_word, const char* new_word) {
+int switchWords(char* old_text, char* new_test, const char* old_word, const char* new_word) {
     char* result;
     int i, n_cnt = 0, o_cnt = 0;
-    //printf("passoui %s %s\n", old_word, new_word);
     int newWlen = strlen(new_word);
-    //printf("passoui\n");
     int oldWlen = strlen(old_word);
-    //printf("passoui\n");
-    // Counting the number of times old word
-    // occur in the string
+
+    // counting the number of times the cyphers appear in the old_text
     for (i = 0; old_text[i] != '\0'; i++) {
         if (strstr(&old_text[i], old_word) == &old_text[i]) {
             n_cnt++;
-            // Jumping to index after the old word.
             i += oldWlen - 1;
         }
         if (strstr(&old_text[i], new_word) == &old_text[i]) {
@@ -31,24 +26,19 @@ int replaceWord(char* old_text, char* new_test, const char* old_word, const char
             i += newWlen - 1;
         }
     }
-    //printf("passoui\n");
-    // Making new string of enough length
+    // making new string of enough length to change the cypher strings
     result = (char*)malloc(i + n_cnt * (newWlen - oldWlen) + o_cnt * (oldWlen - newWlen) + 1);
-  
+    
     i = 0;
+    // compares the cyphers with the text and switch when they are matched
     while (*old_text) {
-        // compare the substring with the result
         if (strstr(old_text, old_word) == old_text) {
-            //printf("\n--analise 1: %s\n\n", old_text);
             strcpy(&result[i], new_word);
-            //printf("\n--resultado 1: %s\n\n", result);
             i += newWlen;
             old_text += oldWlen;
         }
         else if (strstr(old_text, new_word) == old_text){
-            //printf("\n--analise 2: %s\n\n", old_text);
             strcpy(&result[i], old_word);
-            //printf("\n--resultado 2: %s\n\n", result);
             i += oldWlen;
             old_text += newWlen;
         }
@@ -62,11 +52,8 @@ int replaceWord(char* old_text, char* new_test, const char* old_word, const char
     char text[MAX_LINE_SIZE] = "";
     for (int index=0; index < size; index++){
         char ch = result[index];
-        //printf("passoui %c\n", ch);
         strncat(text, &ch, 1);
-        //printf("passoui\n");
     }
-    //printf("%s\n\n", text);
     free(result);
     strcpy(new_test, text);
     return 0;
@@ -122,17 +109,12 @@ int load_cyphers(char ** keys, char** vals){
     int i = 0;
     char k[MAX_WORD_SIZE]; char val[MAX_WORD_SIZE];
     while(fgets (buff, MAX_LINE_SIZE, cyphers)){
-        //printf("antes passou i = %d\n", i);
         sscanf( buff, "%s %s", &k, &val);
-        //printf("passou i = %d   %s    %s\n", i, k, val);
         strcpy(keys[i], k);
         strcpy(vals[i], val);
-        //printf("passou i = %d\n   %s    %s\n", i, keys[i], vals[i]);
         i++;
     }
-    //printf("i = %d\n", i);
     fclose(cyphers);
-    //printf("passou i = %d\n", i);
     return 0;
 }
 
@@ -141,7 +123,6 @@ int main() {
     if (no_lines("cypher.txt", &no_cyphers)) return 1;
 
     // create keys and values arrays to store the cyphers
-    //char** keys = mmap(NULL, 2 * no_cyphers * sizeof(char*), PROT_READ|PROT_WRITE, MAP_SHARED|MAP_ANONYMOUS, -1, 0);
     char** keys = malloc(no_cyphers * sizeof(char*));
     for (int i = 0; i < no_cyphers; i++){
         keys[i] = malloc(MAX_WORD_SIZE * sizeof(char));
@@ -152,24 +133,18 @@ int main() {
     }
 
     if (load_cyphers(keys, vals)) return 1;
-    for (int i=0; i<no_cyphers; i++){
-        //printf("no main   %s    %s\n", keys[i], vals[i]);
-    }
-    //printf("passou\n");
 
     int fd1[2];
     int fd2[2];
     int pid;
     ssize_t numRead;
     
-    
-
     if (pipe(fd1) == -1) {
-        fprintf(stderr, "Pipe Failed");
+        fprintf(stderr, "Pipe 1 Failed");
         return 1;
     }
     if (pipe(fd2) == -1) {
-        fprintf(stderr, "Pipe Failed");
+        fprintf(stderr, "Pipe 2 Failed");
         return 1;
     }
  
@@ -177,63 +152,61 @@ int main() {
         fprintf(stderr, "fork Failed");
         return 1;
     }
-    // Parent process
-    else if (pid > 0) {
-        close(fd1[0]); // Close reading end of first pipe
 
-        // Write input string and close writing end of first
-        // pipe.
+    // parent process
+    else if (pid > 0) {
+        // close reading end of first pipe
+        close(fd1[0]); 
+        // write input text and close writing end of first pipe.
         write_to_pipe(fd1[1]);
         close(fd1[1]);
         
-        // Wait for child to send a string
+        // wait for child to send the text
         wait(NULL);
  
-        close(fd2[1]); // Close writing end of second pipe
- 
-        // Read string from child, print it and close
-        // reading end.
+        close(fd2[1]); // close writing end of second pipe
+        // read text from child, print it to stdout and close
         read_from_pipe(fd2[0], stdout);
         close(fd2[0]);
     }
  
     // child process
     else {
-        //printf("in child process\n");
         close(fd1[1]);
         close(fd2[0]);
         char *res = NULL;
         char str[MAX_LINE_SIZE];
-        //printf("passou\n");
 
         while (1) {
             numRead = read(fd1[0], str, MAX_LINE_SIZE);
             if (numRead == -1) {
-                perror("read");
+                perror("child process: partial/failed read from pipe 1");
                 exit(EXIT_FAILURE);
             }
             if (numRead == 0) break;
-            //printf("before loop cyphers: %d\n", no_cyphers);
             char* new_str;
             for (int i=0; i < no_cyphers; i++){
-                //printf("watching word: %s \n", keys[i]);
                 char* k = keys[i];
                 char* val = vals[i];
-                //strcpy(k, keys[i]);
-                //strcpy(val, vals[i]);
-                //printf("old word: %s   new word: %s \n", k, val);
-                replaceWord(str, new_str, k, val);
+                switchWords(str, new_str, k, val);
                 strcpy(str, new_str);
                 strcpy(new_str, "");
             }
             if (write(fd2[1], str, numRead) != numRead){
-                perror("write - partial/failed write");
+                perror("child process: partial/failed write to pipe 2");
                 exit(EXIT_FAILURE);
             }
-            //printf("read data: %s\n", str);
         }
         close(fd1[0]);
         exit(0);
     }
+
+    //free alocated memory
+    for (int i = 0; i < no_cyphers; i++){
+        free(keys[i]);
+        free(vals[i]);
+    }
+    free(keys);
+    free(vals);
     return 0;
 }

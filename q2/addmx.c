@@ -67,11 +67,8 @@ int main(int argc, char **argv) {
     }
 
     /* Wait for children */
-    int status, corpse;
-    while ((corpse = wait(&status)) > 0)
-    {
-        /* code */
-    }
+    int corpse;
+    while ((corpse = wait(NULL)) > 0){}
     
     printf("%dx%d\n",rows, cols);
     for(int i = rows * cols * 2; i < rows * cols * 3; i++){
