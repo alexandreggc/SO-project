@@ -78,6 +78,7 @@ int main(int argc, char **argv) {
         }
     } 
     printf("\n");
+    munmap(shared, sizeof(int) * rows * cols * 3);
     return 0;
 }
 
